@@ -850,6 +850,105 @@ config BT_MAP_MSE
 	help
 	  This option enables the MAP profile messaging server equipment function
 
+config BT_HID
+	bool "Bluetooth HID Profile support [EXPERIMENTAL]"
+	select BT_SDP
+	select EXPERIMENTAL
+	help
+	  This option enables the Bluetooth Human Interface Device (HID)
+	  Profile v1.1.2 over BR/EDR.  It provides both HID Device and
+	  HID Host role implementations.
+
+if BT_HID
+
+config BT_HID_LOG_LEVEL
+	int "HID Profile log level"
+	range 0 4
+	default 3
+	help
+	  Sets log level for the HID profile.
+	  Levels are:
+	  0 = off
+	  1 = error
+	  2 = warning
+	  3 = info
+	  4 = debug
+
+config BT_HID_TX_BUF_COUNT
+	int "Number of HID TX buffers"
+	default 4
+	range 2 16
+	help
+	  Number of net_buf instances in the shared HID TX pool.
+	  Both Device and Host roles draw from this pool.
+
+config BT_HID_TX_BUF_SIZE
+	int "HID TX buffer payload size in bytes"
+	default 672
+	range 48 65535
+	help
+	  Maximum HIDP payload size per TX buffer.  Should be at least
+	  equal to the largest HID report + 1 (HIDP header).  Defaults
+	  to 672 (Report Protocol MTU minimum per Spec §5.2.3.1).
+
+config BT_HID_DEVICE
+	bool "Bluetooth HID Device Role support [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Enable the HID Device (peripheral) role.  The device registers
+	  L2CAP servers for PSM 0x0011 (Control) and 0x0013 (Interrupt)
+	  and publishes a complete SDP service record.
+
+if BT_HID_DEVICE
+
+config BT_HID_DEVICE_MAX_CONN
+	int "Maximum concurrent HID Device connections"
+	default 1
+	range 1 BT_MAX_CONN
+	help
+	  Maximum number of simultaneous HID connections accepted in the
+	  Device role.
+
+config BT_HID_DEVICE_MAX_REPORT_DESC_LEN
+	int "Maximum HID Report Descriptor size in bytes"
+	default 256
+	range 1 4096
+	help
+	  Maximum size of the HID Report Descriptor stored in the SDP
+	  service record.  Increase for devices with large descriptors.
+
+endif # BT_HID_DEVICE
+
+config BT_HID_HOST
+	bool "Bluetooth HID Host Role support [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Enable the HID Host role.  The host initiates connections to
+	  HID Devices and supports GET_REPORT, SET_REPORT, GET_PROTOCOL,
+	  SET_PROTOCOL, and HID_CONTROL transfers.
+
+if BT_HID_HOST
+
+config BT_HID_HOST_MAX_CONN
+	int "Maximum concurrent HID Host connections"
+	default 1
+	range 1 BT_MAX_CONN
+	help
+	  Maximum number of simultaneous HID connections managed in the
+	  Host role.
+
+config BT_HID_HOST_BOOT_PROTOCOL
+	bool "HID Host Boot Protocol support"
+	help
+	  Enable Boot Protocol Mode (no HID report descriptor parser
+	  required).  Intended for resource-constrained hosts (BIOS-class)
+	  that only support keyboards and/or mice in their fixed boot
+	  report format.
+
+endif # BT_HID_HOST
+
+endif # BT_HID
+
 endif # BT_CLASSIC
 
 endmenu

@@ -55,4 +55,8 @@ zephyr_library_sources_ifdef(
   pbap.c
   )
 
+zephyr_library_sources_ifdef(CONFIG_BT_HID         hid_common.c)
+zephyr_library_sources_ifdef(CONFIG_BT_HID_DEVICE  hid_device.c)
+zephyr_library_sources_ifdef(CONFIG_BT_HID_HOST    hid_host.c)
+
 zephyr_library_link_libraries_ifdef(CONFIG_MBEDTLS mbedTLS)
